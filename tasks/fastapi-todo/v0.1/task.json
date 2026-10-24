@@ -1,0 +1,42 @@
+{
+  "task_id": "fastapi-todo-tags-pagination-v0.1",
+  "title": "给 FastAPI 待办 API 加标签筛选 + 分页",
+  "baseline_repo": "repo",
+  "test_command": ["-m", "pytest", "-q"],
+  "acceptance": [
+    {"id": "A1", "desc": "默认响应结构 {items,total,limit,offset}，limit=20/offset=0"},
+    {"id": "A2", "desc": "tag 过滤只返回包含该标签的记录"},
+    {"id": "A3", "desc": "limit/offset 分页，total 为过滤后总数"},
+    {"id": "A4", "desc": "tag + limit + offset 组合生效且顺序正确"},
+    {"id": "A5", "desc": "空结果返回 200 + items=[]、total=0"},
+    {"id": "A6", "desc": "非法参数 limit=0/101、offset=-1 返回 422"}
+  ],
+  "candidates": [
+    {
+      "id": "A",
+      "model": "glm-5.2",
+      "strategy": "direct",
+      "prompt": "prompts/direct.md"
+    },
+    {
+      "id": "B",
+      "model": "openpangu-2.0-flash",
+      "strategy": "boundary-first",
+      "prompt": "prompts/boundary.md"
+    }
+  ],
+  "judge": {
+    "enabled": false,
+    "model": "",
+    "rubric": {
+      "correctness": "测试通过率；未全过则硬约束失败",
+      "completeness": "是否覆盖 A1-A6 全部验收标准",
+      "maintainability": "实现是否清晰、无重复逻辑"
+    }
+  },
+  "pricing": {
+    "note": "价格快照需由运行者配置；未配置时费用字段为 null，不手填。",
+    "input_per_m_cny": null,
+    "output_per_m_cny": null
+  }
+}
