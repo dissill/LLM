@@ -2,26 +2,48 @@
   "task_id": "fastapi-todo-tags-pagination-v0.1",
   "title": "给 FastAPI 待办 API 加标签筛选 + 分页",
   "baseline_repo": "repo",
-  "test_command": ["-m", "pytest", "-q"],
+  "test_command": [
+    "-m",
+    "pytest",
+    "-q"
+  ],
   "acceptance": [
-    {"id": "A1", "desc": "默认响应结构 {items,total,limit,offset}，limit=20/offset=0"},
-    {"id": "A2", "desc": "tag 过滤只返回包含该标签的记录"},
-    {"id": "A3", "desc": "limit/offset 分页，total 为过滤后总数"},
-    {"id": "A4", "desc": "tag + limit + offset 组合生效且顺序正确"},
-    {"id": "A5", "desc": "空结果返回 200 + items=[]、total=0"},
-    {"id": "A6", "desc": "非法参数 limit=0/101、offset=-1 返回 422"}
+    {
+      "id": "A1",
+      "desc": "默认响应结构 {items,total,limit,offset}，limit=20/offset=0"
+    },
+    {
+      "id": "A2",
+      "desc": "tag 过滤只返回包含该标签的记录"
+    },
+    {
+      "id": "A3",
+      "desc": "limit/offset 分页，total 为过滤后总数"
+    },
+    {
+      "id": "A4",
+      "desc": "tag + limit + offset 组合生效且顺序正确"
+    },
+    {
+      "id": "A5",
+      "desc": "空结果返回 200 + items=[]、total=0"
+    },
+    {
+      "id": "A6",
+      "desc": "非法参数 limit=0/101、offset=-1 返回 422"
+    }
   ],
   "candidates": [
     {
       "id": "A",
-      "model": "glm-5.2",
-      "strategy": "direct",
-      "prompt": "prompts/direct.md"
+      "model": "deepseek-flash",
+      "strategy": "raw-keyword",
+      "prompt": "prompts/raw.md"
     },
     {
       "id": "B",
-      "model": "openpangu-2.0-flash",
-      "strategy": "boundary-first",
+      "model": "deepseek-flash",
+      "strategy": "compiled-srd",
       "prompt": "prompts/boundary.md"
     }
   ],
@@ -35,7 +57,7 @@
     }
   },
   "pricing": {
-    "note": "价格快照需由运行者配置；未配置时费用字段为 null，不手填。",
+    "note": "DeepSeek 官方价（2026-10-27 抓取）：空闲时段 flash 输入 1 元/M、输出 4 元/M；高峰 2/8。运行时通过环境变量设置并写入 evidence.price_snapshot。",
     "input_per_m_cny": null,
     "output_per_m_cny": null
   }
