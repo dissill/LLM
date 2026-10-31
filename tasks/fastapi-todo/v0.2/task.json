@@ -1,0 +1,65 @@
+{
+  "task_id": "fastapi-todo-search-sort-v0.2",
+  "title": "给 FastAPI 待办 API 加搜索 + 排序（在 v0.1 已完成基础上）",
+  "baseline_repo": "repo",
+  "test_file": "tests/test_search_sort.py",
+  "test_command": [
+    "-m",
+    "pytest",
+    "-q"
+  ],
+  "acceptance": [
+    {
+      "id": "A1",
+      "desc": "默认响应结构 {items,total,limit,offset}；limit=20/offset=0；默认按 id 升序"
+    },
+    {
+      "id": "A2",
+      "desc": "q 按标题包含搜索，不区分大小写；total 为过滤后总数"
+    },
+    {
+      "id": "A3",
+      "desc": "sort=title&order=asc 时按标题升序（大小写不敏感）"
+    },
+    {
+      "id": "A4",
+      "desc": "sort=id&order=desc 时按 id 降序"
+    },
+    {
+      "id": "A5",
+      "desc": "tag + q + sort + order + limit/offset 组合生效，先过滤再排序再分页"
+    },
+    {
+      "id": "A6",
+      "desc": "非法参数 sort/order 或空 q 返回 422"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "A",
+      "model": "deepseek-flash",
+      "strategy": "raw-keyword",
+      "prompt": "prompts/raw.md"
+    },
+    {
+      "id": "B",
+      "model": "deepseek-flash",
+      "strategy": "compiled-srd",
+      "prompt": "prompts/compiled.md"
+    }
+  ],
+  "judge": {
+    "enabled": false,
+    "model": "",
+    "rubric": {
+      "correctness": "测试通过率；未全过则硬约束失败",
+      "completeness": "是否覆盖 A1-A6 全部验收标准",
+      "maintainability": "实现是否清晰、无重复逻辑"
+    }
+  },
+  "pricing": {
+    "note": "DeepSeek 官方价（2026-10-30 抓取）：空闲时段 flash 输入 1 元/M、输出 4 元/M；高峰 2/8。运行时通过环境变量设置并写入 evidence.price_snapshot。",
+    "input_per_m_cny": null,
+    "output_per_m_cny": null
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/dissill/LLM/spec/iaov/iaov.schema.json",
+  "title": "IAOV Machine Link Envelope v1.0",
+  "description": "PromptForge 机机联动的结构化消息信封：Intent -> Action -> Observation -> Verdict。自然语言只能作为 Observation 附件，不能作为决策依据。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "message_id",
+    "trace_id",
+    "task_id",
+    "candidate_id",
+    "endpoint_id",
+    "kind",
+    "from",
+    "to",
+    "timestamp",
+    "contract_hash",
+    "permission_scope",
+    "budget",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": {"const": "iaov/1.0"},
+    "message_id": {"type": "string", "pattern": "^msg-[A-Za-z0-9_.:-]{6,96}$"},
+    "trace_id": {"type": "string", "pattern": "^trace-[A-Za-z0-9_.:-]{6,96}$"},
+    "task_id": {"type": "string", "minLength": 1},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "endpoint_id": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["intent", "action", "observation", "verdict"]},
+    "from": {"$ref": "#/$defs/Endpoint"},
+    "to": {"$ref": "#/$defs/Endpoint"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "contract_hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "permission_scope": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/Permission"},
+      "uniqueItems": true
+    },
+    "budget": {"$ref": "#/$defs/Budget"},
+    "payload": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "intent"}}, "required": ["kind"]},
+      "then": {"properties": {"payload": {"$ref": "#/$defs/IntentPayload"}}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "action"}}, "required": ["kind"]},
+      "then": {"properties": {"payload": {"$ref": "#/$defs/ActionPayload"}}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "observation"}}, "required": ["kind"]},
+      "then": {"properties": {"payload": {"$ref": "#/$defs/ObservationPayload"}}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "verdict"}}, "required": ["kind"]},
+      "then": {"properties": {"payload": {"$ref": "#/$defs/VerdictPayload"}}}
+    }
+  ],
+  "$defs": {
+    "Endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "endpoint_id"],
+      "properties": {
+        "role": {"enum": ["planner", "executor", "judge", "human"]},
+        "endpoint_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "Permission": {
+      "enum": ["fs:read", "fs:write", "process:exec", "network:api", "device:control"]
+    },
+    "Budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_tokens", "used_tokens", "max_cny"],
+      "properties": {
+        "max_tokens": {"type": "integer", "minimum": 0},
+        "used_tokens": {"type": "integer", "minimum": 0},
+        "max_cny": {"type": "number", "minimum": 0}
+      }
+    },
+    "Acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "desc"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^A[0-9]+$"},
+        "desc": {"type": "string", "minLength": 1}
+      }
+    },
+    "IntentPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["goal", "acceptance", "constraints"],
+      "properties": {
+        "goal": {"type": "string", "minLength": 1},
+        "acceptance": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Acceptance"}},
+        "constraints": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "ActionPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "arguments", "timeout_ms", "idempotency_key"],
+      "properties": {
+        "tool": {"type": "string", "minLength": 1},
+        "arguments": {"type": "object"},
+        "timeout_ms": {"type": "integer", "minimum": 1},
+        "idempotency_key": {"type": "string", "minLength": 8}
+      }
+    },
+    "ObservationPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "summary", "evidence_refs", "metrics", "artifacts"],
+      "properties": {
+        "status": {"enum": ["ok", "error", "timeout"]},
+        "summary": {"type": "string", "minLength": 1},
+        "evidence_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "metrics": {
+          "type": "object",
+          "additionalProperties": {"type": ["number", "integer", "string", "boolean", "null"]}
+        },
+        "artifacts": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "VerdictPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "score", "confidence", "evidence_refs", "rationale"],
+      "properties": {
+        "decision": {"enum": ["accept", "reject", "repair", "fuse", "stop"]},
+        "score": {"type": "number", "minimum": 0, "maximum": 1},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "evidence_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

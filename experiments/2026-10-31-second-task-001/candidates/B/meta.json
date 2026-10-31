@@ -1,0 +1,20 @@
+{
+  "candidate": "B",
+  "source": "model",
+  "model": "deepseek-flash",
+  "strategy": "compiled-srd",
+  "usage": {
+    "prompt_tokens": 1884,
+    "completion_tokens": 1474,
+    "total_tokens": 3358,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 976
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 1884
+  },
+  "model_latency_ms": 8359
+}

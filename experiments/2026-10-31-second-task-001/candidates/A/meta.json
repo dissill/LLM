@@ -1,0 +1,20 @@
+{
+  "candidate": "A",
+  "source": "model",
+  "model": "deepseek-flash",
+  "strategy": "raw-keyword",
+  "usage": {
+    "prompt_tokens": 456,
+    "completion_tokens": 7634,
+    "total_tokens": 8090,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 7096
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 456
+  },
+  "model_latency_ms": 39239
+}

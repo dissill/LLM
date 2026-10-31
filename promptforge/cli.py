@@ -84,7 +84,8 @@ def run(task_dir: Path, out_dir: Path, replay: bool) -> int:
     task = runner.load_task(task_dir)
     python_exe = sys.executable
     baseline_code = (task_dir / task["baseline_repo"] / "app" / "main.py").read_text(encoding="utf-8")
-    tests_code = (task_dir / task["baseline_repo"] / "tests" / "test_tags_pagination.py").read_text(encoding="utf-8")
+    test_rel = task.get("test_file", "tests/test_tags_pagination.py")
+    tests_code = (task_dir / task["baseline_repo"] / test_rel).read_text(encoding="utf-8")
     expected_total = len(task["acceptance"])
     in_price, out_price = _price(task)
 

@@ -10,6 +10,8 @@
 - 创意 PPT：`docs/PromptForge_Creative_PPT_v1.2.pptx`（6 页：P1–P4 + 机制/机机联动两页附页，无未来计划页）
 - 设计文档 v1.2：`docs/PromptForge_设计文档_v1.2.md` / `.pdf`（新增 §3.11 机机联动层、§7.6 演进路线）
 - 机机联动：规划机 / 执行机 / 评审机 + IAOV 协议；L0 单机回读已由 demo-004 实测，L1/L2 为设计目标，未冒充已实现。
+- 机机联动协议草案：`spec/iaov/`（JSON Schema + Intent→Action→Observation→Verdict 示例 + 零依赖校验）
+- 第二个评测任务：`tasks/fastapi-todo/v0.2/`（在 v0.1 已完成版上增加 q 搜索 + sort/order；baseline 1/6，reference 6/6）
 
 ## 实测结果（2026-10-27）
 
@@ -23,6 +25,18 @@
 > 结论：同样的模型、同样的任务，提示词编译后 6/6 通过，而且更快、更便宜。
 > 证据原文：`experiments/2026-10-27-demo-004/`（evidence JSON、decision.md、候选代码）；三次运行 A 为 4/6、3/6、3/6，B 三次均 6/6。
 > 费用口径：DeepSeek 官方空闲时段价（输入 1 元/M、输出 4 元/M），由真实 token usage 计算。
+
+## 第二个任务（2026-10-31，复现）
+
+任务：在 v0.1 已完成版上增加 `q` 标题搜索 + `sort/order` 排序，并与 tag/分页组合。baseline 保留旧行为，因此 A1 通过（1/6）；reference 6/6。
+
+| 候选 | 策略 | 测试 | 失败用例 | 模型耗时 | token 费用 |
+|---|---|---|---|---|---|
+| A | raw-keyword | **4/6** | A5 组合查询、A6 非法参数 | 39.2s | ¥0.0310 |
+| B | compiled-srd | **6/6** | 无 | 8.4s | ¥0.0078 |
+
+> 结论：两个任务里 B 均为 6/6；A 为 3/6、4/6，raw 提示方差更大，第二次输出 7,634 tokens，费用更高。
+> 证据：`experiments/2026-10-31-second-task-001/`；样本仍小，不宣称统计显著。
 
 ## 快速开始（本地）
 
